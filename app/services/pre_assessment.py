@@ -118,7 +118,6 @@ async def generate_preassessment_for_role(req, services):
 )
 
 
-
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt),
