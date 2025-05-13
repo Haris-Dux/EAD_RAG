@@ -10,6 +10,8 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_chroma import Chroma
 import chromadb
 from chromadb.config import Settings
+import json
+import re
 
 
 async def update_preassessment_data(services, file: UploadFile, roleName: str):
@@ -78,26 +80,44 @@ async def generate_preassessment_for_role(req, services):
         llm = services.llm
 
         system_prompt = (
-            "You are an expert educator and exam content creator.\n"
-            "Given the following text, your task is to create **5 challenging multiple-choice questions (MCQs)** "
-            "that test **deep understanding**, not just recall.\n\n"
-            "Guidelines:\n"
-            "- Each question must have **4 options** (A, B, C, D).\n"
-            "- Only **one option should be correct**.\n"
-            "- Include the **correct answer** after each question.\n"
-            "- Ensure the distractors (wrong options) are plausible but clearly incorrect upon careful thought.\n"
-            "- Vary the question type: some factual, some conceptual, some inferential.\n"
-            "- Use formal academic language and ensure the questions match the tone and depth of the input text.\n\n"
-            "Respond in the following format:\n\n"
-            "1. Question text?\n"
-            "   A. Option A\n"
-            "   B. Option B\n"
-            "   C. Option C\n"
-            "   D. Option D\n"
-            "**Answer: C**\n\n"
-            "Context:\n"
-            "{context}"
-        )
+    "You are an expert educator and exam content creator.\n"
+    "Given the following text, your task is to create **5 challenging multiple-choice questions (MCQs)** "
+    "that test **deep understanding**, not just recall.\n\n"
+    "Guidelines:\n"
+    "- Each question must have **4 options** (A, B, C, D).\n"
+    "- Only **one option should be correct**.\n"
+    "- Ensure the distractors (wrong options) are plausible but clearly incorrect upon careful thought.\n"
+    "- Vary the question type: some factual, some conceptual, some inferential.\n"
+    "- Use formal academic language and ensure the questions match the tone and depth of the input text.\n\n"
+    "Respond ONLY in valid JSON format (no markdown formatting or triple backticks).\n\n"
+    "Format:\n"
+    "{{\n"
+    "  \"questions\": [\n"
+    "    {{\n"
+    "      \"id\": 1,\n"
+    "      \"question\": \"<The question text>\",\n"
+    "      \"options\": {{\n"
+    "        \"A\": \"<Option A>\",\n"
+    "        \"B\": \"<Option B>\",\n"
+    "        \"C\": \"<Option C>\",\n"
+    "        \"D\": \"<Option D>\"\n"
+    "      }}\n"
+    "    }},\n"
+    "    ... (4 more questions)\n"
+    "  ],\n"
+    "  \"answers\": [\n"
+    "    {{ \"id\": 1, \"correctAnswer\": \"C\" }},\n"
+    "    {{ \"id\": 2, \"correctAnswer\": \"A\" }},\n"
+    "    {{ \"id\": 3, \"correctAnswer\": \"D\" }},\n"
+    "    {{ \"id\": 4, \"correctAnswer\": \"B\" }},\n"
+    "    {{ \"id\": 5, \"correctAnswer\": \"C\" }}\n"
+    "  ]\n"
+    "}}\n\n"
+    "Context:\n"
+    "{context}"
+)
+
+
 
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -108,10 +128,15 @@ async def generate_preassessment_for_role(req, services):
 
         question_answer_chain = create_stuff_documents_chain(llm, prompt)
         rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-        result = rag_chain.invoke(
+        llm_res = rag_chain.invoke(
             {"input": "Generate 5 multiple choice questions from the above context."})
+        result = llm_res["answer"]
+        cleaned = re.sub(r"^```json\s*|\s*```$", "", result.strip(), flags=re.DOTALL)
+        response = json.loads(cleaned)
 
-        return str(result["answer"])
+
+
+        return response
 
     except Exception as error:
         return str(error)
