@@ -1,0 +1,27 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment files
+.env
+*.env
+
+# Git
+.git/
+.gitignore
+
+# Docker ignore file itself
+.dockerignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+

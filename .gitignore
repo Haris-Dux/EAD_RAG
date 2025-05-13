@@ -1,0 +1,11 @@
+venv/
+app/.env
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+
+
+# OS files
+.DS_Store
