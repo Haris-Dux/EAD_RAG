@@ -15,7 +15,7 @@ def error_response( message="Something went wrong", status_code=400):
         status_code=status_code,
         content={
             "status": "error",
-            "message": message,
+            "message": str(message),
            
         },
     )

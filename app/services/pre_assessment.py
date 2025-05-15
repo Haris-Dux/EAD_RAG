@@ -1,6 +1,6 @@
 import os
 import tempfile
-from fastapi import UploadFile
+from fastapi import UploadFile,HTTPException
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -42,10 +42,12 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
             deleted = print("deleting existing")
             print(f"Collection {name} deleted: {deleted}")
 
-    #  client.reset()
-    #  existing_collections_number = client.count_collections()
-    #  print(f"Existing collections After: {existing_collections_number}")
-    #  existing_collections = client.list_collections()
+        # existing_collections_number = client.count_collections()
+        # print(f"Existing collections Before resseting: {existing_collections_number}")
+        # client.reset()
+        # existing_collections_number = client.count_collections()
+        # print(f"Existing collections After: {existing_collections_number}")
+        #  existing_collections = client.list_collections()
 
         vector_store = Chroma.from_documents(
             documents=docs,
@@ -57,7 +59,7 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
         return str(vector_store)
 
     except Exception as error:
-        return str(error)
+     raise error
 
     finally:
         os.remove(tmp_path)
@@ -77,11 +79,19 @@ async def generate_preassessment_for_role(req, services):
             search_type="similarity",
             search_kwargs={"k": 3}
         )
+        docs = retriever.invoke(role) 
+        if not docs:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No data available for role '{req.role}'. Please check the role or upload data first."
+            )
         llm = services.llm
 
         system_prompt = (
     "You are an expert educator and exam content creator.\n"
-    "Given the following text, your task is to create **5 challenging multiple-choice questions (MCQs)** "
+    "If the provided context is empty or missing, respond with:\n"
+    "\"No data available for this role. Please check the role or upload data first\"\n\n"
+    "Otherwise Given the following text, your task is to create **5 challenging multiple-choice questions (MCQs)** "
     "that test **deep understanding**, not just recall.\n\n"
     "Guidelines:\n"
     "- Each question must have **4 options** (A, B, C, D).\n"
@@ -133,11 +143,10 @@ async def generate_preassessment_for_role(req, services):
         cleaned = re.sub(r"^```json\s*|\s*```$", "", result.strip(), flags=re.DOTALL)
         response = json.loads(cleaned)
 
-
-
-        return response
+        return response["questions"]
 
     except Exception as error:
-        return str(error)
+             raise error
+
     finally:
         pass
