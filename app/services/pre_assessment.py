@@ -28,7 +28,7 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
         name = roleName
 
     # SPLIT TEXT
-        textSplitter = RecursiveCharacterTextSplitter(chunk_size=1000)
+        textSplitter = RecursiveCharacterTextSplitter(chunk_size=800)
         docs = textSplitter.split_documents(data)
 
     #  EMBEDDING
