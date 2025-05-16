@@ -168,16 +168,16 @@ async def generate_preassessment_for_role(req, services,db):
         pass
 
 
-async def create_assessment_submission(req,db):
+async def create_pre_assessment_submission(req,db):
      try:
          selected_answers = req.answers
-         assessment_id = req.assessment_submission_id
+         assessment_submission_id = req.assessment_submission_id
          cursor = db.cursor()
-         query = "SELECT answers FROM preAssessmentSubmission where id = %s"
-         cursor.execute(query,(assessment_id))
+         query = "SELECT answers,pre_assessment_id FROM preAssessmentSubmission where id = %s"
+         cursor.execute(query,(assessment_submission_id))
          result = cursor.fetchone()
-         correct_answers = result[0]
-         correct_answers = json.loads(correct_answers)
+         correct_answers_json, pre_assessment_id = result
+         correct_answers = json.loads(correct_answers_json)
          score = 0
 
          correct_dict = {item['id']: item['correctAnswer'] for item in correct_answers}
@@ -186,12 +186,24 @@ async def create_assessment_submission(req,db):
             if selected.correctAnswer == correct_option:
                 score += 1
 
-         
+         if score >= 3:
+               cursor.execute("""
+                 UPDATE preAssessmentSubmission 
+                 SET is_submitted = %s, submitted_at = %s 
+                 WHERE id = %s
+             """, (1, datetime.now(), assessment_submission_id))
 
-        
-        
-         return score
+       
+               cursor.execute("""
+                UPDATE preAssessmentCompletion 
+                SET isCompleted = %s 
+                WHERE id = %s
+             """, (1, pre_assessment_id))
+
+         db.commit()
+
+         return {"score": score}
      except Exception as error:
         raise error
      finally:
-         pass
+          cursor.close()

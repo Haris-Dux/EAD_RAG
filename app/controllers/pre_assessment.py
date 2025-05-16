@@ -1,5 +1,5 @@
 from app.models.schemas import  QueryResponse, PreAssessment
-from app.services.pre_assessment import update_preassessment_data, generate_preassessment_for_role, create_assessment_submission
+from app.services.pre_assessment import update_preassessment_data, generate_preassessment_for_role, create_pre_assessment_submission
 from app.utils.responses import success_response,error_response
 from fastapi import HTTPException
 
@@ -20,10 +20,10 @@ async def generate_pre_assessment (req,services,db) -> QueryResponse:
     except Exception as error:
         return error_response(message=str(error), status_code=500)
     
-async def submit_assessment(req,db) -> QueryResponse:
+async def submit_pre_assessment(req,db) -> QueryResponse:
      try:
-         result = await create_assessment_submission(req,db)  
-         return success_response(result,"Assessment submitted successfully.")
+         result = await create_pre_assessment_submission(req,db)  
+         return success_response(result,"Assessment submitted successfully")
      except Exception as error:
         return error_response(message=error)
     
