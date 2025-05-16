@@ -14,7 +14,7 @@ async def update_preassessment_pdf(services,file,roleName) -> QueryResponse:
 async def generate_pre_assessment (req,services,db) -> QueryResponse:
     try:
         result = await generate_preassessment_for_role(req,services,db)
-        return success_response(result,"Pre assessment generated successfully.")
+        return success_response(result,"Assessment generated successfully.")
     except HTTPException as http_exc:
         return error_response(message=http_exc.detail, status_code=http_exc.status_code)
     except Exception as error:
