@@ -1,7 +1,6 @@
 import os
 import tempfile
 from fastapi import UploadFile,HTTPException
-
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import create_retrieval_chain
@@ -10,6 +9,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_chroma import Chroma
 import chromadb
 from chromadb.config import Settings
+from datetime import datetime
 import json
 import re
 
@@ -65,10 +65,12 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
         os.remove(tmp_path)
 
 
-async def generate_preassessment_for_role(req, services):
+async def generate_preassessment_for_role(req, services,db):
 
     try:
         role = req.role
+        pre_assessment_id = req.pre_assessment_id
+        print("pre_assessment_id",pre_assessment_id)
         embeddings = services.embeddings
         vector_store = Chroma(
             embedding_function=embeddings,
@@ -142,11 +144,54 @@ async def generate_preassessment_for_role(req, services):
         result = llm_res["answer"]
         cleaned = re.sub(r"^```json\s*|\s*```$", "", result.strip(), flags=re.DOTALL)
         response = json.loads(cleaned)
+        questions = response["questions"]
+        answers = response["answers"]
 
-        return response["questions"]
+        # UPDATE DATABASE
+        answers_json = json.dumps(answers)
+        questions_json = json.dumps(questions)
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO preAssessmentSubmission VALUES (%s, %s, %s, %s, %s) SELECT SCOPE_IDENTITY()", (pre_assessment_id, 0,answers_json, questions_json, None))
+        row = cursor.fetchone()
+        assessment_id = int(row[0])
+        db.commit()
+
+        return {
+            "questions":questions,
+            "assessment_submission_id":assessment_id
+        }
 
     except Exception as error:
              raise error
 
     finally:
         pass
+
+
+async def create_assessment_submission(req,db):
+     try:
+         selected_answers = req.answers
+         assessment_id = req.assessment_submission_id
+         cursor = db.cursor()
+         query = "SELECT answers FROM preAssessmentSubmission where id = %s"
+         cursor.execute(query,(assessment_id))
+         result = cursor.fetchone()
+         correct_answers = result[0]
+         correct_answers = json.loads(correct_answers)
+         score = 0
+
+         correct_dict = {item['id']: item['correctAnswer'] for item in correct_answers}
+         for selected in selected_answers:   
+            correct_option = correct_dict.get(selected.id)
+            if selected.correctAnswer == correct_option:
+                score += 1
+
+         
+
+        
+        
+         return score
+     except Exception as error:
+        raise error
+     finally:
+         pass

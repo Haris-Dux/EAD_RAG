@@ -4,6 +4,7 @@ from app.api.routes import router
 from app.core.error_handlers import register_exception_handlers
 from app.core.config import Config
 from app.core.services_initializer import servicesContainer
+from app.database.connection import get_db_connection
 
 
 
@@ -15,8 +16,8 @@ servicees_container = servicesContainer()
 async def startup_event():
     servicees_container.initialize_services()
     app.state.services = servicees_container
+    app.state.db_connection =  get_db_connection()
     
-
 register_exception_handlers(app)
 origins = [
     "http://localhost:5173",

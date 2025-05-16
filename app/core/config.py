@@ -8,6 +8,10 @@ class Config:
     GEMINI_API_KEY = os.getenv("GEMNI_API_KEY")
     OPENAI_API_KEY = os.getenv("OPEN_AI_KEY")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    DB_SERVER = os.getenv("DB_SERVER")
+    DB_DATABASE = os.getenv("DB_DATABASE")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
 
     @classmethod
     def validate(cls):
@@ -15,7 +19,11 @@ class Config:
         required_vars = {
             "GEMNI_API_KEY": cls.GEMINI_API_KEY,
             "OPEN_AI_KEY": cls.OPENAI_API_KEY,
-            "JWT_SECRET_KEY":cls.JWT_SECRET_KEY
+            "JWT_SECRET_KEY":cls.JWT_SECRET_KEY,
+            "DB_SERVER": cls.DB_SERVER,
+            "DB_DATABASE": cls.DB_DATABASE,
+            "DB_USER": cls.DB_USER,
+            "DB_PASSWORD": cls.DB_PASSWORD,
         }
 
         missing = [key for key, value in required_vars.items() if not value]
