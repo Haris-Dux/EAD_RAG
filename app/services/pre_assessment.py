@@ -70,7 +70,6 @@ async def generate_preassessment_for_role(req, services,db):
     try:
         role = req.role
         pre_assessment_id = req.pre_assessment_id
-        print("pre_assessment_id",pre_assessment_id)
         embeddings = services.embeddings
         vector_store = Chroma(
             embedding_function=embeddings,

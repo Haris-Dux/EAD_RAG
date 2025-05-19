@@ -16,7 +16,7 @@ async def query_rag(req:PreAssessment,request:Request,protected:None=Depends(dep
   db = request.app.state.db_connection
   return await generate_pre_assessment (req,services,db)
 
-@router.post("/assessment/submit-assessment")
+@router.post("/pre-assessment/submit-assessment")
 async def query_rag(req:AssessmentSubmission,request:Request,protected:None=Depends(dependency=verify_jwt,use_cache=False)):
   db = request.app.state.db_connection
   return await submit_pre_assessment (req,db)

@@ -13,7 +13,6 @@ async def verify_jwt(request: Request):
     try:
         payload = jwt.decode(token, Config.JWT_SECRET_KEY,algorithms=["HS256"])
         request.state.user = payload
-        print("payload",payload)
     except ExpiredSignatureError:
         raise HTTPException(status_code=403, detail="Unauthorized: Token has expired")
     except InvalidTokenError:
