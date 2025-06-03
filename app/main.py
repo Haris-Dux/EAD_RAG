@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import router
+from app.api.pre_assessment import pre_assessment_router 
+from app.api.update_vector_database import sync_files_router
+from app.api.project_assessment import project_assessment_router
 from app.core.error_handlers import register_exception_handlers
 from app.core.config import Config
 from app.core.services_initializer import servicesContainer
@@ -10,12 +12,12 @@ from app.database.connection import get_db_connection
 
 Config.validate()
 app = FastAPI()
-servicees_container = servicesContainer()
+services_container = servicesContainer()
 
 @app.on_event("startup")
 async def startup_event():
-    servicees_container.initialize_services()
-    app.state.services = servicees_container
+    services_container.initialize_services()
+    app.state.services = services_container
     app.state.db_connection =  get_db_connection()
     
 register_exception_handlers(app)
@@ -31,4 +33,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(router)
+app.include_router(pre_assessment_router, prefix="/pre-assessment")
+app.include_router(project_assessment_router, prefix="/project-assessment")
+app.include_router(sync_files_router, prefix="/update-files")
+

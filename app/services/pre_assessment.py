@@ -89,11 +89,9 @@ async def generate_preassessment_for_role(req, services,db):
         llm = services.llm
 
         system_prompt = (
-    "You are an expert educator and exam content creator.\n"
-    "If the provided context is empty or missing, respond with:\n"
-    "\"No data available for this role. Please check the role or upload data first\"\n\n"
-    "Otherwise Given the following text, your task is to create **5 challenging multiple-choice questions (MCQs)** "
-    "that test **deep understanding**, not just recall.\n\n"
+    f"You are an expert educator and exam content creator.\n"
+    f"Your task is to generate **5 challenging multiple-choice questions (MCQs)** for an assessment titled: \"{role}\".\n\n"
+    "The questions must be deeply relevant to both the **title** and the **provided content**, testing deep understanding rather than rote recall.\n\n"
     "Guidelines:\n"
     "- Each question must have **4 options** (A, B, C, D).\n"
     "- Only **one option should be correct**.\n"
@@ -124,7 +122,7 @@ async def generate_preassessment_for_role(req, services,db):
     "    {{ \"id\": 5, \"correctAnswer\": \"C\" }}\n"
     "  ]\n"
     "}}\n\n"
-    "Context:\n"
+     "Context:\n"
     "{context}"
 )
 

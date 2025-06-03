@@ -1,4 +1,4 @@
-from app.models.schemas import  QueryResponse, PreAssessment
+from app.models.schemas import  QueryResponse
 from app.services.pre_assessment import update_preassessment_data, generate_preassessment_for_role, create_pre_assessment_submission
 from app.utils.responses import success_response,error_response
 from fastapi import HTTPException

@@ -32,3 +32,32 @@ class AnswerList(BaseModel):
 class  AssessmentSubmission(BaseModel):
     assessment_submission_id:int
     answers:List[AnswerList]
+
+class ProjectAssessment(BaseModel):
+    project_title:str
+    assessment_title:str
+
+    @field_validator("project_title")
+    @classmethod
+    def project_title_cannot_be_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError('Please enter a valid project title')
+        return v
+    @field_validator("assessment_title")
+    @classmethod
+    def assessment_title_cannot_be_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError('Please enter a valid assessment title')
+        return v
+
+class UpdateProjectFiles(BaseModel):
+    project_id:int
+    project_title:str
+    
+    @field_validator("project_title")
+    @classmethod
+    def project_title_cannot_be_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError('Please enter a valid project title')
+        return v
+
