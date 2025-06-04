@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.pre_assessment import pre_assessment_router 
 from app.api.update_vector_database import sync_files_router
 from app.api.project_assessment import project_assessment_router
+from app.api.personality_assessment import personality_assessment_router
 from app.core.error_handlers import register_exception_handlers
 from app.core.config import Config
 from app.core.services_initializer import servicesContainer
@@ -36,4 +37,6 @@ app.add_middleware(
 app.include_router(pre_assessment_router, prefix="/pre-assessment")
 app.include_router(project_assessment_router, prefix="/project-assessment")
 app.include_router(sync_files_router, prefix="/update-files")
+app.include_router(personality_assessment_router, prefix="/career-consultancy")
+
 

@@ -29,7 +29,7 @@ async def generate_project_assessment(req, services,db):
         if not docs:
             raise HTTPException(
                 status_code=404,
-                detail=f"No data available for project '{project_title}'. Please check the role or upload data first."
+                detail=f"No data available for project '{project_title}'. Please check the project or upload data first."
             )
         llm = services.llm
 
