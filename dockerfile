@@ -2,6 +2,19 @@
 # USE PYTHON IMAGE
 FROM python:3.12-slim
 
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libcairo2 \
+    libgdk-pixbuf2.0-0 \
+    libffi-dev \
+    libgobject-2.0-0 \
+    shared-mime-info \
+    fonts-liberation \
+    fonts-dejavu \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # SET WOTKIN DIRECTORY
 WORKDIR /app
