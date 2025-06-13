@@ -58,7 +58,6 @@ async def sync_project_files(req,services,db):
         textSplitter = RecursiveCharacterTextSplitter(chunk_size=800)
         docs = textSplitter.split_documents(data)
         embeddings = services.embeddings
-
         client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH)
         existing_collections = client.list_collections()
         if normalize_title in existing_collections:
