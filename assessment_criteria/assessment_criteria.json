@@ -1,0 +1,235 @@
+{
+    "Research & Data Collection": {
+        "Objective": "Gather real-world data related to the project using surveys and research.",
+        "Tasks": [
+            "Define the research problem and how AI can help solve it.",
+            "Design a Google Forms survey for data collection.",
+            "Distribute the survey to at least 10 people.",
+            "Collect and summarize responses."
+        ],
+        "Deliverables": [
+            "Research Report (1-page summary)",
+            "Google Forms Survey (at least 10 responses)",
+            "Short Video/Audio explaining findings"
+        ],
+        "Rubric": {
+            "criteria": {
+                "Survey Structure": {
+                    "Excellent (10 pts)": "Clear, well-organized, no bias, diverse questions",
+                    "Good (7-9 pts)": "Mostly clear, some unclear wording",
+                    "Needs Improvement (4-6 pts)": "Basic structure, lacks variety in questions",
+                    "Incomplete (0-3 pts)": "Poorly structured, biased, or incomplete"
+                },
+                "Data Collection": {
+                    "Excellent (10 pts)": "10+ valid responses collected",
+                    "Good (7-9 pts)": "7-9 responses, mostly valid",
+                    "Needs Improvement (4-6 pts)": "4-6 responses, some missing data",
+                    "Incomplete (0-3 pts)": "Less than 4 responses, missing critical data"
+                },
+                "Research Depth": {
+                    "Excellent (10 pts)": "Uses credible sources, includes AI integration",
+                    "Good (7-9 pts)": "Good sources, some AI references",
+                    "Needs Improvement (4-6 pts)": "Limited sources, minimal AI discussion",
+                    "Incomplete (0-3 pts)": "No sources or AI discussion included"
+                }
+            }
+        }
+    },
+    "Data Analysis & Device Planning": {
+        "Objective": "Organize and analyze collected data using charts and AI tools.",
+        "Tasks": [
+            "Input survey data into Google Sheets.",
+            "Use AI tools to identify patterns in the data.",
+            "Create visual representations (bar charts, pie charts, graphs).",
+            "Summarize findings in a short data analysis report."
+        ],
+        "Deliverables": [
+            "Data Spreadsheet (Google Sheets)",
+            "AI-Generated Graphs/Charts",
+            "Summary of Data Insights"
+        ],
+        "Rubric": {
+            "criteria": {
+                "Data Organization": {
+                    "Excellent (10 pts)": "Data is structured, accurate, and complete",
+                    "Good (7-9 pts)": "Mostly structured, minor errors",
+                    "Needs Improvement (4-6 pts)": "Some organization issues, missing elements",
+                    "Incomplete (0-3 pts)": "Disorganized, missing major parts"
+                },
+                "Visualization": {
+                    "Excellent (10 pts)": "Graphs/charts are clear, well-labeled, insightful",
+                    "Good (7-9 pts)": "Mostly clear, lacks full explanation",
+                    "Needs Improvement (4-6 pts)": "Basic graphs, limited insight",
+                    "Incomplete (0-3 pts)": "No graphs, unclear or missing labels"
+                },
+                "Analysis Quality": {
+                    "Excellent (10 pts)": "Identifies trends, includes AI insights",
+                    "Good (7-9 pts)": "Identifies trends, some AI integration",
+                    "Needs Improvement (4-6 pts)": "Basic description, no AI insight",
+                    "Incomplete (0-3 pts)": "No analysis, data left unexplained"
+                }
+            }
+        }
+    },
+    "AI Development & Coding": {
+        "Example Objective": "Build an AI-powered prototype or chatbot for recycling assistance.",
+        "Tasks": [
+            "Use Scratch/Code.org / MERN  to develop a chatbot or AI simulation.",
+            "Implement AI logic to classify recyclable materials.",
+            "Debug and refine the AI’s response accuracy.",
+            "Test AI functionality through multiple inputs."
+        ],
+        "Deliverables": [
+            "AI Prototype (Scratch/Code.org)",
+            "Debugging Report",
+            "Short Demo Video (Screen recording)"
+        ],
+        "Rubric": {
+            "criteria": {
+                "AI Logic & Functionality": {
+                    "Excellent (10 pts)": "AI assistant fully functional, handles multiple inputs",
+                    "Good (7-9 pts)": "Mostly functional, some errors",
+                    "Needs Improvement (4-6 pts)": "Basic function, lacks dynamic responses",
+                    "Incomplete (0-3 pts)": "Non-functional or incomplete code"
+                },
+                "Coding Structure": {
+                    "Excellent (10 pts)": "Well-organized, follows best practices",
+                    "Good (7-9 pts)": "Mostly structured, minor redundancies",
+                    "Needs Improvement (4-6 pts)": "Some structure, inefficient code",
+                    "Incomplete (0-3 pts)": "Poorly structured, lacks clarity"
+                },
+                "Debugging & Refinement": {
+                    "Excellent (10 pts)": "Errors fixed, AI accuracy optimized",
+                    "Good (7-9 pts)": "Some minor bugs remain",
+                    "Needs Improvement (4-6 pts)": "Some debugging attempted",
+                    "Incomplete (0-3 pts)": "No debugging, significant errors remain"
+                }
+            }
+        }
+    },
+    "Expert Interviews & AI Insights": {
+        "Objective": "Build a functional generative AI tool (e.g., chatbot, content generator) using platforms like ChatGPT, LangChain, or Claude, and optimize its performance.",
+        "Tasks": [
+            "Define the AI tool’s purpose (e.g., \"AI Homework Helper\" for math problems).",
+            "Develop a prototype using no-code tools (e.g., Bubble, Voiceflow) or code (Python + LangChain).",
+            "Fine-tune the AI’s responses with prompt engineering or custom datasets.",
+            "Test the tool with 5+ users and iterate based on feedback."
+        ],
+        "Deliverables": [
+            "Working Generative AI Prototype (e.g., chatbot URL, script).",
+            "Prompt Engineering Log (showing iterative improvements).",
+            "User Testing Report (feedback summary + changes made)."
+        ],
+        "Rubric": {
+            "criteria": {
+                "Functionality": {
+                    "Excellent (10 pts)": "AI tool works flawlessly, handles complex queries, and integrates advanced features.",
+                    "Good (7-9 pts)": "Mostly functional but limited to basic inputs/outputs.",
+                    "Needs Improvement (4-6 pts)": "Partial functionality; significant errors.",
+                    "Incomplete (0-3 pts)": "Non-functional or missing key components."
+                },
+                "Prompt Engineering": {
+                    "Excellent (10 pts)": "Clear, iterative prompt refinement with documented improvements.",
+                    "Good (7-9 pts)": "Basic prompt tuning but lacks depth.",
+                    "Needs Improvement (4-6 pts)": "Minimal prompt adjustments; no documentation.",
+                    "Incomplete (0-3 pts)": "No prompt optimization attempted."
+                },
+                "User Testing": {
+                    "Excellent (10 pts)": "5+ test cases with detailed feedback and implemented fixes.",
+                    "Good (7-9 pts)": "3–4 test cases; some feedback applied.",
+                    "Needs Improvement (4-6 pts)": "1–2 test cases; no iteration.",
+                    "Incomplete (0-3 pts)": "No testing conducted."
+                },
+                "Innovation": {
+                    "Excellent (10 pts)": "Unique use case (e.g., \"AI Poetry Coach\") with creative AI interactions.",
+                    "Good (7-9 pts)": "Practical but conventional application (e.g., FAQ bot).",
+                    "Needs Improvement (4-6 pts)": "Derivative idea; lacks originality.",
+                    "Incomplete (0-3 pts)": "No clear purpose or innovation."
+                }
+            }
+        },
+        "Example Project": {
+            "Title": "AI Recycling Advisor",
+            "Tool": "ChatGPT + LangChain chatbot that answers recycling questions.",
+            "Prompt Engineering Log": [
+                "V1: \"What can I recycle?\" → Generic answers.",
+                "V2: \"List recyclable items in [city] based on local guidelines.\" → Added localization."
+            ],
+            "User Testing": [
+                "\"The bot didn’t recognize glass bottles.\" → Added glass recycling data."
+            ]
+        }
+    },
+    "Branding & Promotion": {
+        "Objective": "Develop branding materials and promote the AI assistant.",
+        "Tasks": [
+            "Use Canva to create a logo and branding kit.",
+            "Design a poster or social media campaign.",
+            "Share the AI assistant with the school or local community.",
+            "Collect user feedback on branding effectiveness."
+        ],
+        "Deliverables": [
+            "Canva-based Branding Kit (Logo, Social Media Post)",
+            "Promotional Video or Flyer",
+            "Social Media Campaign Post"
+        ],
+        "Rubric": {
+            "criteria": {
+                "Branding Consistency": {
+                    "Excellent (10 pts)": "Logo, colors, and messaging are aligned",
+                    "Good (7-9 pts)": "Mostly consistent, minor adjustments needed",
+                    "Needs Improvement (4-6 pts)": "Basic branding, lacks cohesion",
+                    "Incomplete (0-3 pts)": "No branding materials included"
+                },
+                "Social Media Promotion": {
+                    "Excellent (10 pts)": "Engaging, well-designed campaign",
+                    "Good (7-9 pts)": "Mostly clear, minor visual issues",
+                    "Needs Improvement (4-6 pts)": "Basic design, lacks engagement",
+                    "Incomplete (0-3 pts)": "No social media promotion created"
+                },
+                "Community Interaction": {
+                    "Excellent (10 pts)": "Successfully reached audience, collected feedback",
+                    "Good (7-9 pts)": "Some engagement, basic feedback",
+                    "Needs Improvement (4-6 pts)": "Limited engagement, no feedback",
+                    "Incomplete (0-3 pts)": "No promotion or engagement"
+                }
+            }
+        }
+    },
+    "Presentation & Reflection": {
+        "Objective": "Present the AI assistant, insights, and learning reflections.",
+        "Tasks": [
+            "Create a Google Slides presentation summarizing the project.",
+            "Include problem statement, AI features, data insights, branding elements.",
+            "Deliver a 5-minute presentation.",
+            "Write a reflection essay on key learnings."
+        ],
+        "Deliverables": [
+            "Google Slides Presentation",
+            "5-Minute Video Presentation",
+            "Final Reflection Essay"
+        ],
+        "Rubric": {
+            "criteria": {
+                "Presentation Structure": {
+                    "Excellent (10 pts)": "Clear, well-organized, engaging visuals",
+                    "Good (7-9 pts)": "Mostly clear, some structural issues",
+                    "Needs Improvement (4-6 pts)": "Basic slides, lacks flow",
+                    "Incomplete (0-3 pts)": "Poorly structured, minimal effort"
+                },
+                "Delivery & Speaking Skills": {
+                    "Excellent (10 pts)": "Confident, clear speech, interactive",
+                    "Good (7-9 pts)": "Mostly clear, minor hesitations",
+                    "Needs Improvement (4-6 pts)": "Needs more confidence, lacks clarity",
+                    "Incomplete (0-3 pts)": "Unclear delivery, minimal engagement"
+                },
+                "Reflection Depth": {
+                    "Excellent (10 pts)": "Thoughtful analysis, strong learning points",
+                    "Good (7-9 pts)": "Good insights, some areas could be deeper",
+                    "Needs Improvement (4-6 pts)": "Basic reflections, lacks depth",
+                    "Incomplete (0-3 pts)": "No reflection, minimal engagement"
+                }
+            }
+        }
+    }
+}

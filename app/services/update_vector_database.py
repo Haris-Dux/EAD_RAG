@@ -9,6 +9,7 @@ import chromadb
 import os
 import aiohttp
 import asyncio
+from app.core.config import Config
 
 
 async def sync_project_files(req,services,db):
@@ -58,7 +59,7 @@ async def sync_project_files(req,services,db):
         docs = textSplitter.split_documents(data)
         embeddings = services.embeddings
 
-        client = chromadb.PersistentClient(path='./chroma_db')
+        client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH)
         existing_collections = client.list_collections()
         if normalize_title in existing_collections:
             print(f"Found Collection /{normalize_title}")
@@ -72,7 +73,7 @@ async def sync_project_files(req,services,db):
         vector_store = Chroma.from_documents(
             documents=docs,
             embedding=embeddings,
-            persist_directory="./chroma_db",
+            persist_directory=Config.CHROMA_DB_PATH,
             collection_name=normalize_title
         )
 

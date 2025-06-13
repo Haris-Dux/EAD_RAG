@@ -12,6 +12,7 @@ class Config:
     DB_DATABASE = os.getenv("DB_DATABASE")
     DB_USER = os.getenv("DB_USER")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
+    CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH")
 
     @classmethod
     def validate(cls):
@@ -24,6 +25,7 @@ class Config:
             "DB_DATABASE": cls.DB_DATABASE,
             "DB_USER": cls.DB_USER,
             "DB_PASSWORD": cls.DB_PASSWORD,
+            "CHROMA_DB_PATH": cls.CHROMA_DB_PATH
         }
 
         missing = [key for key, value in required_vars.items() if not value]

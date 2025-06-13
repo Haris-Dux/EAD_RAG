@@ -31,14 +31,13 @@ class AnswerList(BaseModel):
     id:int
     correctAnswer:str
 
-class  AssessmentSubmission(BaseModel):
+class AssessmentSubmission(BaseModel):
     assessment_submission_id:int
     answers:List[AnswerList]
 
 class ProjectAssessment(StrictBaseModel):
     project_title:str
     assessment_title:str
-
 
 class UpdateProjectFiles(StrictBaseModel):
     project_id:int
@@ -57,3 +56,15 @@ class PersonalityAssessment(StrictBaseModel):
   selected_interests:List[str]
   preferred_role:str
   career_level:str
+
+class Deliverables(BaseModel):
+    dataSpreadsheet: str
+    aiCharts: str
+    dataInsights: str
+
+class SubmitProjectAssessment(AssessmentSubmission):
+    assessment_title:str
+    assessment_id:int
+    project_title:str
+    deliverables: Deliverables
+    

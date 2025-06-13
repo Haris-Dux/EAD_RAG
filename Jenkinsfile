@@ -71,7 +71,7 @@ pipeline {
                         docker rm ead-rag-${env.ENVIRONMENT} || true
 
                         echo "Running new container"
-                        sudo docker run -d --name ead-rag-${env.ENVIRONMENT} --env-file /root/EAD/RAG/.env.prod -p ${env.PORT}:8000 ${env.DOCKER_IMAGE_RAG}
+                        sudo docker run -d --name ead-rag-${env.ENVIRONMENT} --env-file /root/EAD/RAG/.env.prod -p ${env.PORT}:8000 -v Chroma_DB:/DB ${env.DOCKER_IMAGE_RAG}
 
                         echo "Restarting Nginx"
                         sudo systemctl restart nginx

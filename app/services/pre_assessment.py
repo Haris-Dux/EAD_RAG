@@ -12,10 +12,12 @@ from chromadb.config import Settings
 from datetime import datetime
 import json
 import re
+from app.utils.common import normalizeString
+from app.core.config import Config
+
 
 
 async def update_preassessment_data(services, file: UploadFile, roleName: str):
-
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
         tmp.write(await file.read())
         tmp_path = tmp.name
@@ -23,9 +25,9 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
     try:
 
         #  READ FILE
-        loader = PyPDFLoader(tmp_path)
+        loader = PyPDFLoader(tmp_path) 
         data = loader.load()
-        name = roleName
+        name = normalizeString(roleName)
 
     # SPLIT TEXT
         textSplitter = RecursiveCharacterTextSplitter(chunk_size=800)
@@ -34,7 +36,7 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
     #  EMBEDDING
         embeddings = services.embeddings
 
-        client = chromadb.PersistentClient(path='./chroma_db')
+        client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH)
         existing_collections = client.list_collections()
         if name in existing_collections:
             print(f"Found Collection /{name}")
@@ -52,7 +54,7 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
         vector_store = Chroma.from_documents(
             documents=docs,
             embedding=embeddings,
-            persist_directory="./chroma_db",
+            persist_directory=Config.CHROMA_DB_PATH,
             collection_name=name
         )
 
@@ -68,12 +70,13 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
 async def generate_preassessment_for_role(req, services,db):
 
     try:
-        role = req.role
+        role = normalizeString(req.role)
+        print(role)
         pre_assessment_id = req.pre_assessment_id
         embeddings = services.embeddings
         vector_store = Chroma(
             embedding_function=embeddings,
-            persist_directory="./chroma_db",
+            persist_directory=Config.CHROMA_DB_PATH,
             collection_name=role
         )
         retriever = vector_store.as_retriever(

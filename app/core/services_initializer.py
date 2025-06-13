@@ -20,7 +20,7 @@ class servicesContainer:
         )
         
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-2.5-flash-preview-05-20",
             temperature=0.1,
             max_retries=2,
             google_api_key=Config.GEMINI_API_KEY
