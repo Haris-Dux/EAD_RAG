@@ -160,7 +160,7 @@ async def evaluate_project_assessment(req, services, db, user):
               (SELECT correctAnswers FROM AssessmentSubmission where id = {assessment_submission_id}),
               (SELECT id FROM Students where user_id = {user_id})
 """
-        # "SELECT correctAnswers FROM AssessmentSubmission where id = %s"
+
         cursor.execute(query)
         result = cursor.fetchone()
         correct_answers_json, student_id = result
