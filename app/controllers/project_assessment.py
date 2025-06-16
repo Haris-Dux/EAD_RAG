@@ -13,8 +13,8 @@ async def generate_project_assessment(req,services,db):
     
 async def submit_project_assessment(req,services,db,user):
     try:
-        data = await evaluate_project_assessment(req,services,db,user)
-        return success_response(data,"Assessment submitted successfully")
+        await evaluate_project_assessment(req,services,db,user)
+        return success_response("Assessment submitted successfully")
     except HTTPException as http_exc:
         return error_response(message=http_exc.detail,status_code=http_exc.status_code)
     except Exception as error:
