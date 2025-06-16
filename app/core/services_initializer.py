@@ -1,8 +1,8 @@
 
 from app.core.config import Config
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_chroma import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 
 
 
@@ -25,3 +25,11 @@ class servicesContainer:
             max_retries=2,
             google_api_key=Config.GEMINI_API_KEY
         )
+
+
+        #    self.llm = ChatGroq(
+#             model="meta-llama/llama-4-scout-17b-16e-instruct",
+#             temperature=0.3,
+#             api_key=Config.GROQ_API_KEY
+#         )
+#         cleaned = re.sub(r"(?:```json|```|<think>.*?</think>)", "", result, flags=re.DOTALL).strip() 

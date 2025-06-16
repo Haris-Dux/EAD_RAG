@@ -6,7 +6,7 @@ load_dotenv()
 class Config:
 
     GEMINI_API_KEY = os.getenv("GEMNI_API_KEY")
-    OPENAI_API_KEY = os.getenv("OPEN_AI_KEY")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
     DB_SERVER = os.getenv("DB_SERVER")
     DB_DATABASE = os.getenv("DB_DATABASE")
@@ -19,7 +19,7 @@ class Config:
 
         required_vars = {
             "GEMNI_API_KEY": cls.GEMINI_API_KEY,
-            "OPEN_AI_KEY": cls.OPENAI_API_KEY,
+            "GROQ_API_KEY": cls.GROQ_API_KEY,
             "JWT_SECRET_KEY":cls.JWT_SECRET_KEY,
             "DB_SERVER": cls.DB_SERVER,
             "DB_DATABASE": cls.DB_DATABASE,

@@ -262,4 +262,3 @@ async def evaluate_project_assessment(req, services, db, user):
         raise error
     finally:
         db.commit()
-        cursor.close()

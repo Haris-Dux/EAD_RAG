@@ -71,7 +71,6 @@ async def generate_preassessment_for_role(req, services,db):
 
     try:
         role = normalizeString(req.role)
-        print(role)
         pre_assessment_id = req.pre_assessment_id
         embeddings = services.embeddings
         vector_store = Chroma(
@@ -81,7 +80,7 @@ async def generate_preassessment_for_role(req, services,db):
         )
         retriever = vector_store.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 3}
+            search_kwargs={"k": 2}
         )
         docs = retriever.invoke(role) 
         if not docs:
@@ -128,7 +127,6 @@ async def generate_preassessment_for_role(req, services,db):
      "Context:\n"
     "{context}"
 )
-
 
         prompt = ChatPromptTemplate.from_messages(
             [
