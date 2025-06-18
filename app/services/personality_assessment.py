@@ -3,6 +3,9 @@
 from langchain_core.prompts import ChatPromptTemplate
 from weasyprint import HTML
 import re
+import json
+import base64
+from io import BytesIO
 
 
 async def generate_personality_assessment_pdf(req, services):
@@ -16,116 +19,125 @@ async def generate_personality_assessment_pdf(req, services):
 
         llm = services.llm
 
-        system_prompt = f"""
-                 Generate a detailed career consultancy report using ONLY these 5 inputs:
-                 Name
-                 Personality Type
-                 Selected Interests (2 industries)
-                 Preferred Role
-                 Career Level
-                 And 3 Fixed Roles we are offering with Link which are
-                 AI Data & Prompt Engineering
-                 Generative AI Development
-                 AI Brand Strategy & Outreach 
-                 
-                 Follow this EXACT structure and formatting:
-                 # AI Career Consultancy Report  
-                 *Name:* [Name]  
-                 *Personality Type:* [Personality Type]  
-                 *Selected Interests:* [Industry1], [Industry2]  
-                 *Preferred Role:* [Preferred Role]  
-                 *Career Level:* [Career Level]  
-                 
-                 
-                 ### a) Personality Assessment 
-                 1. *How You Shine Naturally:*  (All based on MBTI, 3 Examples are below)
-                    - Strategic Visionary: You spot patterns others miss and design systems for the future  
-                    - Independent Creator: You do your best work when given space to think deeply  
-                    - Precision Engineer: You catch flaws in systems and enjoy optimizing them  
-                 
-                 
-                 2. *Your Superpowers at Work:*  (All based on MBTI, 3 Examples are below)
-                    - Dominant Strength: Long-term problem solving (You imagine what could be)  
-                    - Supporting Strength: Logical decision-making (You weigh options carefully)  
-                    - Growth Area: Adapting to rapid changes (Practice breaking big goals into small steps)  
-                 
-                 
-                 3. *Your Career Personality Type:* [Personality Type]  (All based on MBTI, 3 Examples are below)
-                    - Thrives in: Structured innovation roles  
-                    - Best work environment: Autonomous with clear goals  
-                    - Ideal challenges: Complex problems needing elegant solutions  
-                 
-                 
-                 4. *Cognitive Functions:*  (All based on MBTI)
-                    - Dominant: [Dominant Function]  
-                    - Supporting: [Supporting Function]  
-                    - Inferior/Avoiding: [Avoiding Function]  
-                 
-                 
-                 ### What you should do NEXT  
-                 *1)* AI Career Recommendation for Phase 1**  
-                 *Primary Role:* [Preferred Role]  
-                 - Best Fit For: [Role-specific strength]  
-                 - Self-Guided Booklet: [Role] Development with [Link]  
-                 
-                 
-                 *Alternative Role:* [Alternative Role]  (Based on MBTI, if different than suggested)
-                 - Consider If You Prefer: [Alternative strength]  
-                 - Self-Guided Booklet: [Alternative] with [Link]  
-                 
-                 
-                 *2)* 10 TED Talks (on Selected Industries):**  
-                 1. "How AI is Revolutionizing [Industry1]"  
-                 2. "The Future of [Industry2] using AI"  
-                 3. [Industry1-specific talk]  
-                 ...  
-                 
-                 
-                 *3)* 10 Professional Interviews:**  
-                 1. [Industry1] AI Consultant  
-                 2. [Industry2] Solutions Architect  
-                 ...  
-                 
-                 
-                 ### c) Phase 2: Specialization (Later)  
-                 *Requirements:*  
-                 - Level 1 Skill Assessment (Free)  
-                 - Level 1 Industry Assessment (Free)  
-                 
-                 
-                 *Guided Industry AI Projects (Premium):*  
-                 - [Industry1]: [Project1]  
-                 - [Industry2]: [Project2]  
-                 ….6 Projects  
-                   🐾 Animal Habitat Conservation  
-                   ☁ AI-Powered Weather Prediction  
-                   ...  
-                 
-                 
-                 *Personal Branding:* (must include minimum actionable suggestions, same level as other sections like 'Personality Assessment') 
-                 - LinkedIn Optimization Guide  
-                 - Portfolio Building Templates 
+        system_prompt = (
+            "Generate a detailed career consultancy report using ONLY these 5 inputs:.\n\n"
+            "- Name: {name}\n"
+            "- Personality Type (use descriptive term, not 4-letter MBTI code): {personality_type}\n"
+            "- Selected Interests (2 industries): {selected_interests}\n"
+            "- Preferred Role: {preferred_role}\n"
+            "- Career Level: {career_level}\n\n"
+            "Also 3 fixed roles we are offering:\n"
+            "1. AI Data & Prompt Engineering\n"
+            "2. Generative AI Development\n"
+            "3. AI Brand Strategy & Outreach\n\n"
+            "⚠️ Respond ONLY in valid JSON format (no markdown, no triple backticks).\n\n"
+            "⚠️ DO NOT repeat the examples. Generate fresh, personalized content using the same structure.\n\n"
+            "Here are EXAMPLES to guide the structure and tone (DO NOT COPY them):\n\n"
+            "1. *How You Shine Naturally:* (All based on MBTI, 3 Examples are below)\n"
+            "   - Strategic Visionary: You spot patterns others miss and design systems for the future\n"
+            "   - Independent Creator: You do your best work when given space to think deeply\n"
+            "   - Precision Engineer: You catch flaws in systems and enjoy optimizing them\n\n"
+            "2. *Your Superpowers at Work:* (All based on MBTI, 3 Examples are below)\n"
+            "   - Dominant Strength: Long-term problem solving (You imagine what could be)\n"
+            "   - Supporting Strength: Logical decision-making (You weigh options carefully)\n"
+            "   - Growth Area: Adapting to rapid changes (Practice breaking big goals into small steps)\n\n"
+            "3. *Your Career Personality Type:* [Personality Type] (All based on MBTI, 3 Examples are below)\n"
+            "   - Thrives in: Structured innovation roles\n"
+            "   - Best work environment: Autonomous with clear goals\n"
+            "   - Ideal challenges: Complex problems needing elegant solutions\n\n"
+            "4. *Cognitive Functions:*  (All based on MBTI)\n"
+            "   - Dominant: [Dominant Function]\n"  
+            "   - Supporting: [Supporting Function]\n"  
+            "   - Inferior/Avoiding: [Avoiding Function]\n\n"  
 
-
-                 Rules:
-                 Auto-generate ALL bracketed content ([Dominant Function], [Project1], etc.) based on:
-                 Standard MBTI/personality frameworks
-                 The 2 selected industries
-                 The preferred role
-                 Never add/remove sections - maintain this exact() structure 
-                 Keep tone professional yet encouraging
-                 Example Input Now:
-                 Name: {Name}  
-                 Personality Type: {PersonalityType}  
-                 Selected Interests: {SelectedInterests[0]}, {SelectedInterests[1]}  
-                 Preferred Role: {PreferredRole} 
-                 Career Level: {CareerLevel} 
-                 Key Features:
-                 ✅ Auto-populates cognitive functions (INTP → "Introverted Thinking"). Also don’t use 4 Letter code or MBTI  but use Personality word for MBTI
-                 ✅ Generates industry-specific TED Talks and projects
-                 ✅ Maintains your exact formatting with emojis and sections
-                """
-
+            "Format:\n"
+            "{{\n"
+            "  \"personalityAssessment\": {{\n"
+            "    \"HowYouShineNaturally\": {{\n"
+            "      \"StrategicVisionary\": \"\",\n"
+            "      \"IndependentCreator\": \"\",\n"
+            "      \"PrecisionEngineer\": \"\"\n"
+            "    }},\n"
+            "    \"YourSuperpowersatWork\": {{\n"
+            "      \"DominantStrength\": \"\",\n"
+            "      \"SupportingStrength\": \"\",\n"
+            "      \"GrowthArea\": \"\"\n"
+            "    }},\n"
+            "    \"CareerPersonality\": {{\n"
+            "      \"Type\": \"\",\n"
+            "      \"ThrivesIn\": \"\",\n"
+            "      \"BestEnvironment\": \"\",\n"
+            "      \"IdealChallenges\": \"\"\n"
+            "    }},\n"
+            "    \"CognitiveFunctions\": {{\n"
+            "      \"Dominant\": \"\",\n"
+            "      \"Supporting\": \"\",\n"
+            "      \"Inferior/Avoiding\": \"\"\n"
+            "    }}\n"
+            "  }},\n"
+            "  \"AICareerRecommendationforPhase1\": {{\n"
+            "    \"PrimaryRole\": \"<[Preferred Role]>\",\n"
+            "    \"BestFitFor\": \"<[Role-specific strength]\",\n"
+            "    \"AlternativeRole\": \"<[Alternative Role]  (Based on MBTI, if different than suggested)>\",\n"
+            "    \"ConsiderIfYouPrefer\": \"<[Alternative strength]>\"\n"
+            "  }},\n"
+            "  \"10TEDTalks\": [\n"
+            "    \"How AI is Revolutionizing <Industry1>\",\n"
+            "    \"The Future of <Industry2> using AI\",\n"
+            "    \"<[Industry1-specific talk]>\",\n"
+            "    \"<Talk 4>\",\n"
+            "    \"<Talk 5>\",\n"
+            "    \"<Talk 6>\",\n"
+            "    \"<Talk 7>\",\n"
+            "    \"<Talk 8>\",\n"
+            "    \"<Talk 9>\",\n"
+            "    \"<Talk 10>\"\n"
+            "  ],\n"
+            "  \"10ProfessionalInterviews\": [\n"
+            "    \"<Industry1> AI Consultant\",\n"
+            "    \"<Industry2> Solutions Architect\",\n"
+            "    \"<Interview 3>\",\n"
+            "    \"<Interview 4>\",\n"
+            "    \"<Interview 5>\",\n"
+            "    \"<Interview 6>\",\n"
+            "    \"<Interview 7>\",\n"
+            "    \"<Interview 8>\",\n"
+            "    \"<Interview 9>\",\n"
+            "    \"<Interview 10>\"\n"
+            "  ],\n"
+            "  \"GuidedIndustryAIProjects\": [\n"
+            "    \"<Industry1>: <Project 1>\",\n"
+            "    \"<Industry2>: <Project 2>\",\n"
+            "    \"<Industry1>: <Project 1>\",\n"
+            "    \"<Industry2>: <Project 2>\",\n"
+            "    \"<Industry1>: <Project 1>\",\n"
+            "    \"<Industry2>: <Project 2>\",\n"
+            "    \"<Industry1>: <Project 1>\",\n"
+            "    \"<Industry2>: <Project 2>\",\n"
+            "  ],\n"
+            "  \"PersonalBranding\": {{\n"
+            "    \"LinkedInOptimizationGuide\": \"<Short optimization guide>\",\n"
+            "    \"PortfolioBuildingTemplates\": [\n"
+            "      \"Project Showcase Template\",\n"
+            "      \"Case Study Template\",\n"
+            "      \"Personal Website Template\"\n"
+            "    ]\n"
+            "  }}\n"
+            "}}\n\n"
+            "Rules:\n"
+            "Auto-generate ALL bracketed content ([Dominant Function], [Project1], etc.) based on:\n"
+            "Standard MBTI/personality frameworks\n"
+            "The 2 selected industries\n"
+            "The preferred role\n"
+            "Never add/remove sections - maintain this exact structure\n"
+            "Keep tone professional yet encouraging\n"
+            "Key Features:\n"
+            "✅ Auto-populates cognitive functions (INTP → Introverted Thinking). Also don’t use 4 Letter code or MBTI  but use Personality word for MBTI\n"
+            "✅ Generates industry-specific TED Talks and projects\n"
+            "✅ Maintains your exact formatting with emojis and sections\n"
+            "Context:\n"
+            '{{context}}'
+        )
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt),
@@ -136,219 +148,144 @@ async def generate_personality_assessment_pdf(req, services):
         rag_chain = prompt | llm
 
         llm_res = rag_chain.invoke(
-            {"input": "Generate a detailed career consultancy report"})
+            {"input": "Generate a detailed career consultancy report",
+             "name": Name,
+             "personality_type": PersonalityType,
+             "selected_interests": [SelectedInterests[0],SelectedInterests[1]],
+             "preferred_role": PreferredRole,
+             "career_level": CareerLevel,
+             })
         raw = llm_res.content
+        cleaned = re.sub(r"^```json\s*|\s*```$", "",
+                         raw.strip(), flags=re.DOTALL)
+        cleaned = cleaned.strip()
+        extracted_data = json.loads(cleaned)
 
-        extracted_data = extract_sections(raw)
-      
 
         html_content = f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{Name}'s Personality Assessment</title>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            padding: 40px;
-            color: #333;
-        }}
-        h1, h2 {{
-            color: #2c3e50;
-        }}
-        section {{
-            margin-bottom: 30px;
-        }}
-        ul {{
-            padding-left: 20px;
-        }}
-        .section-title {{
-            margin-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 5px;
-        }}
-        .note {{
-            font-style: italic;
-            color: #555;
-        }}
-    </style>
+<meta charset="UTF-8">
+<title>Personality Assessment</title>
+<style>
+    body {{
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        padding: 40px;
+        color: #333;
+    }}
+    h1, h2 {{
+        color: #2c3e50;
+    }}
+    section {{
+        margin-bottom: 30px;
+    }}
+    ul {{
+        padding-left: 20px;
+    }}
+    .section-title {{
+        margin-bottom: 10px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+    }}
+</style>
 </head>
 <body>
-    <h1>{Name}'s Personality Assessment Report</h1>
+<h1>Personality Assessment Report</h1>
 
-    <section>
-        <h2 class="section-title">🌟 How You Shine</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['how_you_shine'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🌟 How You Shine Naturally</h2>
+    <ul>
+        {''.join(f'<li><strong>{key}:</strong> {value}</li>' for key, value in extracted_data['personalityAssessment']['HowYouShineNaturally'].items())}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">🦸 Your Superpowers at Work</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['your_superpowers_at_work'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🦸 Your Superpowers at Work</h2>
+    <ul>
+        {''.join(f'<li><strong>{key}:</strong> {value}</li>' for key, value in extracted_data['personalityAssessment']['YourSuperpowersatWork'].items())}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">💼 Your Career Personality Type</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['your_career_personality_type'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">💼 Your Career Personality Type</h2>
+    <ul>
+        {''.join(f'<li><strong>{key}:</strong> {value}</li>' for key, value in extracted_data['personalityAssessment']['CareerPersonality'].items())}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">🧠 Cognitive Functions</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['cognitive_functions'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🧠 Cognitive Functions</h2>
+    <ul>
+        {''.join(f'<li><strong>{key}:</strong> {value}</li>' for key, value in extracted_data['personalityAssessment']['CognitiveFunctions'].items())}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">🎯 Primary Role</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['primary_role'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🎯 Primary Role</h2>
+    <ul>
+        <li><strong>Role:</strong> {extracted_data['AICareerRecommendationforPhase1']['PrimaryRole']}</li>
+        <li><strong>Best Fit For:</strong> {extracted_data['AICareerRecommendationforPhase1']['BestFitFor']}</li>
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">🛠 Alternative Role</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['alternative_role'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🛠 Alternative Role</h2>
+    <ul>
+        <li><strong>Role:</strong> {extracted_data['AICareerRecommendationforPhase1']['AlternativeRole']}</li>
+        <li><strong>Consider If You Prefer:</strong> {extracted_data['AICareerRecommendationforPhase1']['ConsiderIfYouPrefer']}</li>
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">🎤 Recommended TED Talks</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['ted_talks'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🎤 Recommended TED Talks</h2>
+    <ul>
+        {''.join(f'<li>{item}</li>' for item in extracted_data['10TEDTalks'])}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">👥 Target Interviews</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['interviews'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">👥 Target Interviews</h2>
+    <ul>
+        {''.join(f'<li>{item}</li>' for item in extracted_data['10ProfessionalInterviews'])}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">🚀 Guided Projects</h2>
-        <ul>
-            {''.join(f'<li>{item}</li>' for item in extracted_data['guided_projects'])}
-        </ul>
-    </section>
+<section>
+    <h2 class="section-title">🚀 Guided Projects</h2>
+    <ul>
+        {''.join(f'<li>{item}</li>' for item in extracted_data['GuidedIndustryAIProjects'])}
+    </ul>
+</section>
 
-    <section>
-        <h2 class="section-title">📌 Personal Branding Tips</h2>
-        <h3>LinkedIn</h3>
-        <p>{extracted_data['personal_branding']['linkedin'].strip(': ')}</p>
-        <h3>Portfolio</h3>
-        <p>{extracted_data['personal_branding']['portfolio'].strip(': ')}</p>
-    </section>
+<section>
+    <h2 class="section-title">📌 Personal Branding Tips</h2>
+    <h3>LinkedIn</h3>
+    <p>{extracted_data['PersonalBranding']['LinkedInOptimizationGuide']}</p>
+    <h3>Portfolio Templates</h3>
+    <ul>
+        {''.join(f'<li>{item}</li>' for item in extracted_data['PersonalBranding']['PortfolioBuildingTemplates'])}
+    </ul>
+</section>
 </body>
 </html>
 """
 
 
-        pdf_file_path = f"{Name}_Personality_Assessment.pdf"
-        HTML(string=html_content).write_pdf(pdf_file_path)
-        return pdf_file_path
+        with BytesIO() as pdf_buffer:
+             HTML(string=html_content).write_pdf(pdf_buffer)
+             pdf_data = pdf_buffer.getvalue()
+             pdf_base64 = base64.b64encode(pdf_data).decode("utf-8")
+
+        return {
+            "file_name": f"{Name}_Personality_Assessment.pdf",
+            "pdf_base64": pdf_base64,
+            "roles":extracted_data['AICareerRecommendationforPhase1']
+        }
 
     except Exception as error:
         raise error
 
     finally:
         pass
-
-
-def extract_sections(response: str):
-    def extract_list_items(text):
-        lines = re.findall(r'-\s*(.+)', text)
-        return [line.strip() for line in lines]
-    sections = {}
-
-    # Extract raw text
-    raw_how_you_shine = re.search(
-        r'### a\) Personality Assessment\s+1\. \*How You Shine Naturally:\*([\s\S]+?)\n\s+2\.', response).group(1).strip()
-    raw_superpowers = re.search(
-        r'2\. \*Your Superpowers at Work:\*([\s\S]+?)\n\s+3\.', response).group(1).strip()
-    raw_career_personality = re.search(
-        r'3\. \*Your Career Personality Type:\*.+?\n([\s\S]+?)\n\s+4\.', response).group(1).strip()
-    raw_cognitive_functions = re.search(
-        r'4\. \*Cognitive Functions:\*([\s\S]+?)\n\s+###', response).group(1).strip()
-
-    # Parse each section into arrays
-    sections['how_you_shine'] = extract_list_items(raw_how_you_shine)
-    sections['your_superpowers_at_work'] = extract_list_items(raw_superpowers)
-    sections['your_career_personality_type'] = extract_list_items(
-        raw_career_personality)
-    sections['cognitive_functions'] = extract_list_items(
-        raw_cognitive_functions)
-
-    # What you should do NEXT
-    sections['primary_role'] = re.search(
-        r'\*Primary Role:\* (.+?)\n- Best Fit For: (.+?)\n- Self-Guided Booklet: (.+)', response).groups()
-    sections['alternative_role'] = re.search(
-        r'\*Alternative Role:\* (.+?)\n- Consider If You Prefer: (.+?)\n- Self-Guided Booklet: (.+)', response).groups()
-
-    # TED Talks (basic fallback list extraction)
-    ted_talks_match = re.search(
-        r'\*2\)\* 10 TED Talks \(on Selected Industries\):\*\*(.+?)\n\s+\*3\)\*', response, re.DOTALL)
-    if ted_talks_match:
-        ted_talks_raw = ted_talks_match.group(1).strip()
-    ted_talks_lines = ted_talks_raw.split('\n')
-
-    cleaned_talks = []
-    for line in ted_talks_lines:
-        line = line.strip()
-        if not line:
-            continue
-
-        # Remove leading number and dot
-        if '.' in line:
-            line = line.split('.', 1)[1].strip()
-
-        # Remove surrounding quotes and smart quotes
-        line = line.strip('"“”')
-
-        cleaned_talks.append(line)
-
-    sections['ted_talks'] = cleaned_talks
-
-    # Interviews
-    interviews_match = re.search(
-        r'\*3\)\* 10 Professional Interviews:\*\*(.+?)\n\s+### c\)', response, re.DOTALL)
-    if interviews_match:
-        interviews_raw = interviews_match.group(1).strip()
-        sections['interviews'] = [line.strip(
-            "0123456789. ") for line in interviews_raw.strip().split('\n') if line.strip()]
-
-    # Specialization - Projects
-    projects_match = re.search(
-        r'\*Guided Industry AI Projects \(Premium\):\*([\s\S]+?)\n\s+\*Personal Branding:', response)
-    if projects_match:
-        projects_text = projects_match.group(1).strip()
-        project_lines = [line.strip('- ').strip()
-                         for line in projects_text.split('\n') if line.strip()]
-        sections['guided_projects'] = project_lines
-
-    # Branding
-    branding_match = re.search(
-        r'\*Personal Branding:\*.*?- LinkedIn Optimization Guide\s*(.+?)\s*- Portfolio Building Templates\s*(.+?)(?=\n[#*]|$)',
-        response,
-        re.DOTALL
-    )
-
-    if branding_match:
-        linkedin = branding_match.group(1).strip()
-    portfolio = branding_match.group(2).strip()
-
-    sections['personal_branding'] = {
-        'linkedin': linkedin,
-        'portfolio': portfolio
-    }
-
-    return sections

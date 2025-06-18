@@ -240,7 +240,7 @@ async def evaluate_project_assessment(req, services, db, user):
 
         overallScore = mcqScore + rubricsTotal
         cursor.execute("INSERT INTO AssessmentEvaluations VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) SELECT SCOPE_IDENTITY()",
-                 (mcqScore, totalMCQ, response["MCQ_Evaluation"], response["Area_for_Improvement"], response["AI_Opinion"], overallTotal, student_id, assessment_id, overallScore, 0, datetime.now(), 1, 1, None, 0, assessment_submission_id ))
+                 (mcqScore, totalMCQ, response["MCQ_Evaluation"], response["Area_for_Improvement"], response["AI_Opinion"], overallTotal, student_id, assessment_id, overallScore, 0, datetime.now(), 1, 1, None, 1, assessment_submission_id ))
         row = cursor.fetchone()
         assessment_evaluation_id = int(row[0])
         

@@ -6,8 +6,8 @@ from fastapi import HTTPException
 
 async def generate_personality_assessment_report(req,services):
     try:
-        pdf = await generate_personality_assessment_pdf(req,services)
-        return file_response(pdf)
+        data = await generate_personality_assessment_pdf(req,services)
+        return success_response(data)
     except HTTPException as http_exc:
         return error_response(message=http_exc.detail,status_code=http_exc.status_code)
     except Exception as error:
