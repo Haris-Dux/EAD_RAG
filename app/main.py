@@ -22,15 +22,10 @@ async def startup_event():
     app.state.db_connection =  get_db_connection()
     
 register_exception_handlers(app)
-origins = [
-    "http://localhost:5173",
-    "https://taskproject.site",
-    "https://dev.taskproject.site",
-]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
