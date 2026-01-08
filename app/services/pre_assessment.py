@@ -37,28 +37,28 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
         embeddings = services.embeddings
 
         client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH,settings=Settings(allow_reset=True))
-        # existing_collections = client.list_collections()
-        # if name in existing_collections:
-        #     print(f"Found Collection /{name}")
-        #     client.delete_collection(name=name)
-        #     deleted = print("deleting existing")
-        #     print(f"Collection {name} deleted: {deleted}")
+        existing_collections = client.list_collections()
+        if name in existing_collections:
+            print(f"Found Collection /{name}")
+            client.delete_collection(name=name)
+            deleted = print("deleting existing")
+            print(f"Collection {name} deleted: {deleted}")
 
-        existing_collections_number = client.count_collections()
-        print(f"Existing collections Before resseting: {existing_collections_number}")
-        client.reset()
-        existing_collections_number = client.count_collections()
-        print(f"Existing collections After: {existing_collections_number}")
-         # existing_collections = client.list_collections()
+        # existing_collections_number = client.count_collections()
+        # print(f"Existing collections Before resseting: {existing_collections_number}")
+        # client.reset()
+        # existing_collections_number = client.count_collections()
+        # print(f"Existing collections After: {existing_collections_number}")
+        #  # existing_collections = client.list_collections()
 
-        # vector_store = Chroma.from_documents(
-        #     documents=docs,
-        #     embedding=embeddings,
-        #     persist_directory=Config.CHROMA_DB_PATH,
-        #     collection_name=name
-        # )
+        vector_store = Chroma.from_documents(
+            documents=docs,
+            embedding=embeddings,
+            persist_directory=Config.CHROMA_DB_PATH,
+            collection_name=name
+        )
 
-        return str("Vector db restored")
+        return str(vector_store)
 
     except Exception as error:
      raise error
