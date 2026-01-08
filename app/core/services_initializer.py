@@ -16,13 +16,8 @@ class servicesContainer:
       
        self.embeddings = GoogleGenerativeAIEmbeddings(
             model="models/gemini-embedding-001",
-            google_api_key=Config.GEMINI_API_KEY,
-            output_dimensionality=768,
+            google_api_key=Config.GEMINI_API_KEY
         )
-
-          # 🔍 sanity check at startup (this will tell you immediately)
-        v = self.embeddings.embed_query("dimension check", output_dimensionality=768)
-        print("Embedding dim:", len(v))  # MUST print 768
         
         self.llm = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash",
