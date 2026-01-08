@@ -15,7 +15,7 @@ class servicesContainer:
     def initialize_services(self):
       
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001",
+            model="models/gemini-embedding-001",
             google_api_key=Config.GEMINI_API_KEY
         )
         
