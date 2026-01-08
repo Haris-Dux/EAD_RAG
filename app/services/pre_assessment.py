@@ -36,7 +36,7 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
     #  EMBEDDING
         embeddings = services.embeddings
 
-        client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH)
+        client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH,allow_reset=True)
         # existing_collections = client.list_collections()
         # if name in existing_collections:
         #     print(f"Found Collection /{name}")
