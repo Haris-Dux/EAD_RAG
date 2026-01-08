@@ -16,8 +16,7 @@ class servicesContainer:
       
         self.embeddings = GoogleGenerativeAIEmbeddings(
             model="models/gemini-embedding-001",
-            google_api_key=Config.GEMINI_API_KEY,
-             output_dimensionality=768
+            google_api_key=Config.GEMINI_API_KEY
         )
         
         self.llm = ChatGoogleGenerativeAI(
