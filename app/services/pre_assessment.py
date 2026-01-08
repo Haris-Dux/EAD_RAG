@@ -39,7 +39,7 @@ async def update_preassessment_data(services, file: UploadFile, roleName: str):
         client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH,settings=Settings(allow_reset=True))
         existing_collections = client.list_collections()
         if name in existing_collections:
-            print(f"Found Collection /{name}")
+            print(f"Found Collection is /{name}")
             client.delete_collection(name=name)
             deleted = print("deleting existing")
             print(f"Collection {name} deleted: {deleted}")
