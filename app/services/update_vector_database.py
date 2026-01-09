@@ -55,7 +55,7 @@ async def sync_project_files(req,services,db):
         loader = PyPDFLoader(merged_filename)
         data = loader.load()
 
-        textSplitter = RecursiveCharacterTextSplitter(chunk_size=500,chunk_overlap=80)
+        textSplitter = RecursiveCharacterTextSplitter(chunk_size=800)
         docs = textSplitter.split_documents(data)
         embeddings = services.embeddings
         client = chromadb.PersistentClient(path=Config.CHROMA_DB_PATH)
