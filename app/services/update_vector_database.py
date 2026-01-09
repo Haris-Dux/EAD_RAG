@@ -11,6 +11,8 @@ import aiohttp
 import asyncio
 from app.core.config import Config
 
+BATCH_SIZE = 20
+SLEEP_SECONDS = 120.0
 
 async def sync_project_files(req,services,db):
     try:
@@ -75,6 +77,11 @@ async def sync_project_files(req,services,db):
             persist_directory=Config.CHROMA_DB_PATH,
             collection_name=normalize_title
         )
+
+        for i in range(0, len(docs), BATCH_SIZE):
+         batch = docs[i:i + BATCH_SIZE]
+         vector_store.add_documents(batch)  
+         await asyncio.sleep(SLEEP_SECONDS)
 
         return str(vector_store)
 
