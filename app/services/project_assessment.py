@@ -9,8 +9,9 @@ import re
 from app.utils.common import normalizeString
 from datetime import datetime
 from app.core.config import Config
+from pathlib import Path
 
-
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 async def generate_assessment_for_project(req, services, db):
 
@@ -147,7 +148,8 @@ async def evaluate_project_assessment(req, services, db, user):
         llm = services.llm
 
         # get relevent json data for assessment
-        with open("./assessment_criteria/assessment_criteria.json") as file:
+        CRITERIA_PATH = BASE_DIR / "assessment_criteria" / "assessment_criteria.json"
+        with open(CRITERIA_PATH, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         rubricsData = data.get(assessment_title)
