@@ -19,7 +19,7 @@ async def sync_project_files(req,services,db):
         cursor = db.cursor()
         query = 'SELECT fileName FROM Lessons WHERE project_id = %s'
         cursor.execute(query,(project_id))
-        files = cursor.fetchall()[:4]
+        files = cursor.fetchall()[:2]
         if not len(files):
             raise HTTPException(
                 status_code=404,
